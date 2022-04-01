@@ -19,12 +19,8 @@ int main(int argc, char** argv){
 
     uint32_t cycles = 0;
 
-    while(cycles++ < 10000000){
+    while(cycles++ < 10000){
         tick_chip(chip);
-    }
-
-    for(uint16_t i = 0; i < (DISPLAY_WIDTH / 8) * DISPLAY_HEIGHT; i++){
-        printf("%x", chip -> display[i]);
     }
 
     return 0;

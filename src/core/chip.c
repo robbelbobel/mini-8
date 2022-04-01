@@ -6,6 +6,9 @@ chip_t* create_chip(const char* program, const size_t length){
     // Create CHIP
     chip_t* chip = (chip_t*) malloc(sizeof(chip_t));
 
+    // Create Display Buffer
+    chip -> display = (uint8_t*) malloc(sizeof(uint8_t) * DISPLAY_BUFFER_SIZE);
+
     // Copy Program Into Memory
     for(size_t i = 0; i < length; i++) chip -> memory[PROGRAM_LOCATION + i] = program[i];
 

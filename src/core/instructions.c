@@ -4,11 +4,11 @@ void __execute(chip_t* chip){
     // Fetch Instruction
     const __uint16_t instr = ((uint16_t) chip -> memory[chip -> pc] << 8) + chip -> memory[chip -> pc + 1];
     
-    // Update Program Counter
-    chip -> pc += 2;
-
     // DEBUG
     printf("PC: %x, instr: %x, i: %x\n", chip -> pc, instr, chip -> i);
+
+    // Update Program Counter
+    chip -> pc += 2;
 
     // Execute Instruction
     switch((instr & 0xF000) >> 12){
@@ -230,7 +230,7 @@ void __ld_st_v(chip_t* chip, const __uint16_t instr){
 
 void __ld_f_v(chip_t* chip, const __uint16_t instr){
     chip -> i = CHARACTER_LOCATION + chip -> v[(instr & 0x0F00) >> 8] * 5;
-}
+}   
 
 void __ld_b_v(chip_t* chip, const __uint16_t instr){
     ;;
@@ -303,5 +303,23 @@ void __rnd(chip_t* chip, const __uint16_t instr){
 }
 
 void __drw(chip_t* chip, const __uint16_t instr){
-    
+    uint8_t height = instr & 0x000F;
+    uint8_t x = chip -> v[(instr & 0x0F00) >> 8];
+    uint8_t y = chip -> v[(instr & 0x00F0) >> 4];
+
+    for(uint8_t i = 0; i < height; i++){
+        uint8_t row = chip -> memory[chip -> i + i];
+        for(uint8_t j = 0; j < 8; j++){
+            chip -> display[(y + i) * (DISPLAY_WIDTH / 8) + ((x + j) / 8)] ^= row & (0b1 << (7 - j));
+        }
+    }
+
+    for(uint8_t i = 0; i < DISPLAY_HEIGHT; i++){
+        for(uint8_t j = 0; j < DISPLAY_WIDTH / 8; j++){
+            printf("%x", chip -> display[i * (DISPLAY_WIDTH / 8) + j]);
+        }
+        printf("\n");
+    }
+
+    printf("\n");
 }

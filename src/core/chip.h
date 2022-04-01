@@ -25,7 +25,7 @@ struct chip_s{
     __uint8_t dt;
     __uint8_t st;
 
-    __uint8_t display[DISPLAY_BUFFER_SIZE];
+    __uint8_t* display;
 
 } typedef chip_t;
 
