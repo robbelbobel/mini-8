@@ -8,7 +8,9 @@
 #define PROGRAM_LOCATION 0x0200
 #define CHARACTER_LOCATION 0x0000
 
-#define DISPLAY_BUFFER_SIZE (64 / 8) * 32 // 1 Bit Per Pixel
+#define DISPLAY_WIDTH   64
+#define DISPLAY_HEIGHT  32
+#define DISPLAY_BUFFER_SIZE (DISPLAY_WIDTH / 8) * DISPLAY_HEIGHT // 1 Bit Per Pixel
 
 struct chip_s{
     __uint8_t memory[4096];
@@ -27,7 +29,7 @@ struct chip_s{
 
 } typedef chip_t;
 
-chip_t* create_chip(const char* program);
+chip_t* create_chip(const char* program, const size_t length);
 
 void tick_chip(chip_t* chip);
 

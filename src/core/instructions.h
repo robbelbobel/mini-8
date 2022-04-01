@@ -3,6 +3,8 @@
 
 #include "chip.h"
 
+#include "stdio.h"
+
 struct chip_s typedef chip_t;
 
 void __execute(chip_t* chip);

@@ -2,12 +2,12 @@
 
 #include "instructions.h"
 
-chip_t* create_chip(const char* program){
+chip_t* create_chip(const char* program, const size_t length){
     // Create CHIP
     chip_t* chip = (chip_t*) malloc(sizeof(chip_t));
 
     // Copy Program Into Memory
-    for(__uint16_t i = 0; program[i] != '\0'; i++) chip -> memory[PROGRAM_LOCATION + i] = program[i];
+    for(size_t i = 0; i < length; i++) chip -> memory[PROGRAM_LOCATION + i] = program[i];
 
     // Initialize Registers
     chip -> pc = PROGRAM_LOCATION; 

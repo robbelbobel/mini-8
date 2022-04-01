@@ -2,13 +2,16 @@
 
 void __execute(chip_t* chip){
     // Fetch Instruction
-    const __uint16_t instr = chip -> memory[chip -> pc] | chip -> memory[chip -> pc + 1];
+    const __uint16_t instr = ((uint16_t) chip -> memory[chip -> pc] << 8) + chip -> memory[chip -> pc + 1];
     
     // Update Program Counter
     chip -> pc += 2;
 
+    // DEBUG
+    printf("PC: %x, instr: %x, i: %x\n", chip -> pc, instr, chip -> i);
+
     // Execute Instruction
-    switch((instr & 0xF00) >> 8){
+    switch((instr & 0xF000) >> 12){
         case 0x0:
             if(instr == 0xE0) __cls(chip, instr);
             else if(instr == 0xEE) __ret(chip, instr);
@@ -167,11 +170,11 @@ void __ret(chip_t* chip, const __uint16_t instr){
 
 /** JP CALL **/
 void __jp(chip_t* chip, const __uint16_t instr){
-    chip -> pc = instr & 0xFFF; 
+    chip -> pc = instr & 0x0FFF; 
 }
 
 void __jp_v(chip_t* chip, const __uint16_t instr){
-    chip -> pc = (instr & 0xFFF) + chip -> v[0];
+    chip -> pc = (instr & 0x0FFF) + chip -> v[0];
 }
 
 void __call(chip_t* chip, const __uint16_t instr){
@@ -230,7 +233,7 @@ void __ld_f_v(chip_t* chip, const __uint16_t instr){
 }
 
 void __ld_b_v(chip_t* chip, const __uint16_t instr){
-    ;
+    ;;
 }
 
 void __ld_i_v(chip_t* chip, const __uint16_t instr){
@@ -287,18 +290,18 @@ void __shl(chip_t* chip, const __uint16_t instr){
 
 /** SKIP **/
 void __skp(chip_t* chip, const __uint16_t instr){
-    ;
+    ;;
 }
 
 void __sknp(chip_t* chip, const __uint16_t instr){
-    ;
+    ;;
 }
 
 /** MISC **/
 void __rnd(chip_t* chip, const __uint16_t instr){
-    ;
+    ;;
 }
 
 void __drw(chip_t* chip, const __uint16_t instr){
-    ;
+    
 }

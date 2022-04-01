@@ -1,20 +1,20 @@
 #include "loader.h"
 
-char* loadFile(const char* path){
+char* loadFile(const char* path, size_t* length){
     // Open File
     FILE* file = fopen(path, "rb");
     if(file == NULL) return 0;
 
     // Calculate File Size
     fseek(file, 0, SEEK_END);
-    uint16_t fSize = ftell(file);
+    *length = ftell(file);
     rewind(file);
 
     // Allocate Memory
-    char* data = (char*) malloc(fSize);
+    char* data = (char*) malloc(*length);
 
     // Load File
-    fgets(data, sizeof(char) * fSize, file);
+    fread(data, sizeof(char), *length, file);
     fclose(file);
 
     return data;
