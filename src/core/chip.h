@@ -1,7 +1,7 @@
 #ifndef CHIP_H
 #define CHIP_H
 
-#include <stdlib.h>
+#include <stdint.h>
 
 #include "instructions.h"
 
@@ -13,23 +13,25 @@
 #define DISPLAY_BUFFER_SIZE (DISPLAY_WIDTH / 8) * DISPLAY_HEIGHT // 1 Bit Per Pixel
 
 struct chip_s{
-    __uint8_t memory[4096];
-    __uint16_t stack[16];
+    uint8_t memory[4096];
+    uint16_t stack[16];
 
-    __uint16_t pc;
-    __uint8_t sp;
+    uint16_t pc;
+    uint8_t sp;
 
-    __uint8_t v[16];
-    __uint16_t i;
+    uint8_t v[16];
+    uint16_t i;
 
-    __uint8_t dt;
-    __uint8_t st;
+    uint8_t dt;
+    uint8_t st;
 
-    __uint8_t* display;
+    uint8_t* display;
+
+    uint8_t (*rnd_fun_ptr)();
 
 } typedef chip_t;
 
-chip_t* create_chip(const char* program, const size_t length);
+chip_t* create_chip(const char* program, const uint16_t length, void* (*malloc_fun_ptr)(unsigned long), uint8_t (*rnd_fun_ptr)());
 
 void tick_chip(chip_t* chip);
 

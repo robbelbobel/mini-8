@@ -4,4 +4,4 @@
 
 * Finish implementing instructions
 
-* Implement screen drawing in SDL
+* Implement Flags
