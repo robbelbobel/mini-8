@@ -9,6 +9,9 @@ chip_t* create_chip(const char* program, const uint16_t length, void* (*malloc_f
     // Create Display Buffer
     chip -> display = (uint8_t*) (*malloc_fun_ptr)(sizeof(uint8_t) * DISPLAY_BUFFER_SIZE);
 
+    // Initialize Key States
+    chip -> keyStates = 0x0000;
+
     // Copy Program Into Memory
     for(uint16_t i = 0; i < length; i++) chip -> memory[PROGRAM_LOCATION + i] = program[i];
 
@@ -42,6 +45,7 @@ chip_t* create_chip(const char* program, const uint16_t length, void* (*malloc_f
     // Clear Display Buffer
     __cls(chip);
 
+    // Assign Random Function Pointer
     chip -> rnd_fun_ptr = &(*rnd_fun_ptr);
 
     return chip;

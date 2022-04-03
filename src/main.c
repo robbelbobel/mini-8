@@ -7,7 +7,7 @@
 
 #define EMULATION_SPEED 500
 
-uint8_t handleInput(SDL_Window* window);
+uint8_t handleInput(SDL_Window* window, chip_t* chip);
 
 int main(int argc, char** argv){
     /** INITIALIZE RANDOM **/
@@ -45,7 +45,9 @@ int main(int argc, char** argv){
     }
 
     /** MAIN LOOP **/
-    while(handleInput(window)){
+    while(handleInput(window, chip)){
+        printf("keystates: %x\n", chip -> keyStates);
+
         tick_chip(chip);
         render(chip, renderer);
     }
@@ -57,13 +59,155 @@ int main(int argc, char** argv){
     return 0;
 }
 
-uint8_t handleInput(SDL_Window* window){
+uint8_t handleInput(SDL_Window* window, chip_t* chip){
     SDL_Event ev;
 
     while(SDL_PollEvent(&ev)){
         switch(ev.type){
             case SDL_QUIT:
                 return 0;
+
+            case SDL_KEYDOWN:
+                switch(ev.key.keysym.sym){
+                    case SDLK_1:
+                        chip -> keyStates |= (0x0001 << 0x1);
+                        break;
+
+                    case SDLK_2:
+                        chip -> keyStates |= (0x0001 << 0x2);
+                        break;
+
+                    case SDLK_3:
+                        chip -> keyStates |= (0x0001 << 0x3);
+                        break;
+
+                    case SDLK_4:
+                        chip -> keyStates |= (0x0001 << 0xC);
+                        break;
+
+                    case SDLK_a:
+                        chip -> keyStates |= (0x0001 << 0x4);
+                        break;
+
+                    case SDLK_z:
+                        chip -> keyStates |= (0x0001 << 0x5);
+                        break;
+
+                    case SDLK_e:
+                        chip -> keyStates |= (0x0001 << 0x6);
+                        break;
+
+                    case SDLK_r:
+                        chip -> keyStates |= (0x0001 << 0xd);
+                        break;
+
+                    case SDLK_q:
+                        chip -> keyStates |= (0x0001 << 0x7);
+                        break;
+
+                    case SDLK_s:
+                        chip -> keyStates |= (0x0001 << 0x8);
+                        break;
+
+                    case SDLK_d:
+                        chip -> keyStates |= (0x0001 << 0x9);
+                        break;
+
+                    case SDLK_f:
+                        chip -> keyStates |= (0x0001 << 0xE);
+                        break;
+
+                    case SDLK_w:
+                        chip -> keyStates |= (0x0001 << 0xA);
+                        break;
+
+                    case SDLK_x:
+                        chip -> keyStates |= (0x0001 << 0x0);
+                        break;
+
+                    case SDLK_c:
+                        chip -> keyStates |= (0x0001 << 0xB);
+                        break;
+
+                    case SDLK_v:
+                        chip -> keyStates |= (0x0001 << 0xF);
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case SDL_KEYUP:
+                switch(ev.key.keysym.sym){
+                    case SDLK_1:
+                        chip -> keyStates &= ~(0x0001 << 0x1);
+                        break;
+
+                    case SDLK_2:
+                        chip -> keyStates &= ~(0x0001 << 0x2);
+                        break;
+
+                    case SDLK_3:
+                        chip -> keyStates &= ~(0x0001 << 0x3);
+                        break;
+
+                    case SDLK_4:
+                        chip -> keyStates &= ~(0x0001 << 0xC);
+                        break;
+
+                    case SDLK_a:
+                        chip -> keyStates &= ~(0x0001 << 0x4);
+                        break;
+
+                    case SDLK_z:
+                        chip -> keyStates &= ~(0x0001 << 0x5);
+                        break;
+
+                    case SDLK_e:
+                        chip -> keyStates &= ~(0x0001 << 0x6);
+                        break;
+
+                    case SDLK_r:
+                        chip -> keyStates &= ~(0x0001 << 0xd);
+                        break;
+
+                    case SDLK_q:
+                        chip -> keyStates &= ~(0x0001 << 0x7);
+                        break;
+
+                    case SDLK_s:
+                        chip -> keyStates &= ~(0x0001 << 0x8);
+                        break;
+
+                    case SDLK_d:
+                        chip -> keyStates &= ~(0x0001 << 0x9);
+                        break;
+
+                    case SDLK_f:
+                        chip -> keyStates &= ~(0x0001 << 0xE);
+                        break;
+
+                    case SDLK_w:
+                        chip -> keyStates &= ~(0x0001 << 0xA);
+                        break;
+
+                    case SDLK_x:
+                        chip -> keyStates &= ~(0x0001 << 0x0);
+                        break;
+
+                    case SDLK_c:
+                        chip -> keyStates &= ~(0x0001 << 0xB);
+                        break;
+
+                    case SDLK_v:
+                        chip -> keyStates &= ~(0x0001 << 0xF);
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
 
             default:
                 break;

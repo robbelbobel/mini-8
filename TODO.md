@@ -3,5 +3,3 @@
 * Implement collision checking
 
 * Finish implementing instructions
-
-* Implement Flags

@@ -28,7 +28,7 @@ void __ld_dt_v(chip_t* chip, const uint16_t instr);
 void __ld_st_v(chip_t* chip, const uint16_t instr);
 void __ld_f_v(chip_t* chip, const uint16_t instr);
 void __ld_b_v(chip_t* chip, const uint16_t instr);
-void __ld_i_v(chip_t* chip);
+void __ld_i_v(chip_t* chip, const uint16_t instr);
 void __ld_v_i(chip_t* chip);
 
 void __add_v_byte(chip_t* chip, const uint16_t instr);

@@ -2,6 +2,7 @@
 #define CHIP_H
 
 #include <stdint.h>
+#include <stdio.h> // DEBUG
 
 #include "instructions.h"
 
@@ -16,6 +17,9 @@ struct chip_s{
     uint8_t memory[4096];
     uint16_t stack[16];
 
+    uint8_t* display;
+    uint16_t keyStates;
+
     uint16_t pc;
     uint8_t sp;
 
@@ -24,8 +28,6 @@ struct chip_s{
 
     uint8_t dt;
     uint8_t st;
-
-    uint8_t* display;
 
     uint8_t (*rnd_fun_ptr)();
 

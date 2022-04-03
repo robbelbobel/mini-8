@@ -7,6 +7,8 @@ void __execute(chip_t* chip){
     // Update Program Counter
     chip -> pc += 2;
 
+    printf("pc: %x, opcode: %x%x \n", chip -> pc, chip -> memory[chip -> pc], chip -> memory[chip -> pc + 1]);
+
     // Execute Instruction
     switch((instr & 0xF000) >> 12){
         case 0x0:
@@ -18,7 +20,6 @@ void __execute(chip_t* chip){
             __jp(chip, instr);
             break;
 
-        
         case 0x2:
             __call(chip, instr);
             break;
@@ -139,7 +140,7 @@ void __execute(chip_t* chip){
                     break;
                 
                 case 0x55:
-                    __ld_i_v(chip);
+                    __ld_i_v(chip, instr);
                     break;
                 
                 case 0x65:
@@ -175,7 +176,7 @@ void __jp_v(chip_t* chip, const uint16_t instr){
 }
 
 void __call(chip_t* chip, const uint16_t instr){
-    chip -> stack[chip -> sp++] = chip -> pc;
+    chip -> stack[++chip -> sp] = chip -> pc;
     __jp(chip, instr);
 }
 
@@ -185,7 +186,7 @@ void __se_v_byte(chip_t* chip, const uint16_t instr){
 }
 
 void __se_v_v(chip_t* chip, const uint16_t instr){
-    if(chip -> v[(instr & 0x0F00) >> 8] == chip -> v[(instr & 0x00F0) >> 8]) chip -> pc += 2;
+    if(chip -> v[(instr & 0x0F00) >> 8] == chip -> v[(instr & 0x00F0) >> 4]) chip -> pc += 2;
 }
 
 void __sne_v_byte(chip_t* chip, const uint16_t instr){
@@ -193,7 +194,7 @@ void __sne_v_byte(chip_t* chip, const uint16_t instr){
 }
 
 void __sne_v_v(chip_t* chip, const uint16_t instr){
-    if(chip -> v[(instr & 0x0F00) >> 8] != chip -> v[(instr & 0x00F0) >> 8]) chip -> pc += 2;
+    if(chip -> v[(instr & 0x0F00) >> 8] != chip -> v[(instr & 0x00F0) >> 4]) chip -> pc += 2;
 }
 
 /** LD **/
@@ -233,8 +234,8 @@ void __ld_b_v(chip_t* chip, const uint16_t instr){
     ;;
 }
 
-void __ld_i_v(chip_t* chip){
-    for(uint8_t n = 0; n < 16; n++) chip -> memory[chip -> i + n] = chip -> v[n];
+void __ld_i_v(chip_t* chip, const uint16_t instr){
+    for(uint8_t n = 0; n < ((instr & 0x0F00) >> 8); n++) chip -> memory[chip -> i + n] = chip -> v[n];
 }
 
 void __ld_v_i(chip_t* chip){
@@ -256,42 +257,50 @@ void __add_i_v(chip_t* chip, const uint16_t instr){
 
 /** BIT OPERATIONS **/
 void __or(chip_t* chip, const uint16_t instr){
-    chip -> v[(instr & 0x0F00) >> 8] |= chip -> v[(instr & 0x00F0) >> 8];
+    chip -> v[(instr & 0x0F00) >> 8] |= chip -> v[(instr & 0x00F0) >> 4];
 }
 
 void __and(chip_t* chip, const uint16_t instr){
-    chip -> v[(instr & 0x0F00) >> 8] &= chip -> v[(instr & 0x00F0) >> 8];
+    chip -> v[(instr & 0x0F00) >> 8] &= chip -> v[(instr & 0x00F0) >> 4];
 }
 
 void __xor(chip_t* chip, const uint16_t instr){
-    chip -> v[(instr & 0x0F00) >> 8] ^= chip -> v[(instr & 0x00F0) >> 8];
+    chip -> v[(instr & 0x0F00) >> 8] ^= chip -> v[(instr & 0x00F0) >> 4];
 }
 
 /** SUB **/
 void __sub(chip_t* chip, const uint16_t instr){
+    chip -> v[0xF] = chip -> v[(instr & 0x0F00) >> 8] > chip -> v[(instr & 0x00F0) >> 4];
+
     chip -> v[(instr & 0x0F00) >> 8] -= chip -> v[(instr & 0x00F0) >> 4];
 }
 
 void __subn(chip_t* chip, const uint16_t instr){
+    chip -> v[0xF] = chip -> v[(instr & 0x0F00) >> 8] < chip -> v[(instr & 0x00F0) >> 4];
+
     chip -> v[(instr & 0x0F00) >> 8] = chip -> v[(instr & 0x00F0) >> 4] - chip -> v[(instr & 0x0F00) >> 8];
 }
 
 /** SHIFT **/
 void __shr(chip_t* chip, const uint16_t instr){
+    chip -> v[0xF] = chip -> v[(instr & 0x0F00) >> 8] & 0b1;
+
     chip -> v[(instr & 0x0F00) >> 8] >>= 1;
 }
 
 void __shl(chip_t* chip, const uint16_t instr){
+    chip -> v[0xF] = chip -> v[(instr & 0x0F00) >> 8] >> 7;
+
     chip -> v[(instr & 0x0F00) >> 8] <<= 1;
 }
 
 /** SKIP **/
 void __skp(chip_t* chip, const uint16_t instr){
-    ;;
+    if(chip -> keyStates >> chip -> v[(instr & 0x0F00) >> 8]) chip -> pc += 2;
 }
 
 void __sknp(chip_t* chip, const uint16_t instr){
-    ;;
+    if(!chip -> keyStates >> chip -> v[(instr & 0x0F00) >> 8]) chip -> pc += 2;
 }
 
 /** MISC **/
