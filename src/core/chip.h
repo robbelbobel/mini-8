@@ -35,8 +35,7 @@ struct chip_s{
 
 chip_t* create_chip(const char* program, const uint16_t length, void* (*malloc_fun_ptr)(unsigned long), uint8_t (*rnd_fun_ptr)());
 
+void decrement_timers(chip_t* chip);
 void tick_chip(chip_t* chip);
-
-void __execute(chip_t* chip);
 
 #endif

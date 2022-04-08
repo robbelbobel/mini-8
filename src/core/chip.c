@@ -51,6 +51,11 @@ chip_t* create_chip(const char* program, const uint16_t length, void* (*malloc_f
     return chip;
 }
 
+void decrement_timers(chip_t* chip){
+    if(chip -> dt) chip -> dt--;
+    if(chip -> st) chip -> st--;
+}
+
 void tick_chip(chip_t* chip){
     __execute(chip);
 }

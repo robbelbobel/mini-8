@@ -5,7 +5,7 @@
 #include "loader.h"
 #include "core/chip.h"
 
-#define EMULATION_SPEED 500
+#define EMULATION_SPEED 1000
 
 uint8_t handleInput(SDL_Window* window, chip_t* chip);
 
@@ -43,13 +43,32 @@ int main(int argc, char** argv){
         SDL_Quit();
         return -3;
     }
-
+    
     /** MAIN LOOP **/
-    while(handleInput(window, chip)){
-        printf("keystates: %x\n", chip -> keyStates);
+    uint16_t d_time_update = 0;
+    uint16_t d_time_system = 0;
+    uint16_t oldTime = SDL_GetTicks();
 
-        tick_chip(chip);
-        render(chip, renderer);
+    uint8_t running = 1;
+
+    while(running){
+        if(d_time_system >= 1000 / EMULATION_SPEED){
+            tick_chip(chip);
+
+            d_time_system = 0;
+        }
+
+        if(d_time_update > 16){
+            decrement_timers(chip);
+            render(chip, renderer);
+            running = handleInput(window, chip);
+            
+            d_time_update = 0;
+        }
+
+        d_time_update += SDL_GetTicks() - oldTime;
+        d_time_system += SDL_GetTicks() - oldTime;
+        oldTime = SDL_GetTicks();
     }
 
     SDL_DestroyWindow(window);

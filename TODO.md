@@ -1,5 +1,5 @@
 # TODO
 
-* Implement collision checking
+* Fix Collisions
 
-* Finish implementing instructions
+* Fix Keyboard Input

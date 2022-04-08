@@ -7,8 +7,6 @@ void __execute(chip_t* chip){
     // Update Program Counter
     chip -> pc += 2;
 
-    printf("pc: %x, opcode: %x%x \n", chip -> pc, chip -> memory[chip -> pc], chip -> memory[chip -> pc + 1]);
-
     // Execute Instruction
     switch((instr & 0xF000) >> 12){
         case 0x0:
@@ -144,7 +142,7 @@ void __execute(chip_t* chip){
                     break;
                 
                 case 0x65:
-                    __ld_v_i(chip);
+                    __ld_v_i(chip, instr);
                     break;
                 
                 default:
@@ -215,7 +213,14 @@ void __ld_v_dt(chip_t* chip, const uint16_t instr){
 }
 
 void __ld_v_k(chip_t* chip, const uint16_t instr){
-    ;
+    for(uint8_t i = 0; i < 16; i++){
+        if((chip -> keyStates >> i) & 0b1){
+            chip -> v[(instr & 0x0F00) >> 8] = i;
+            return;
+        }
+    }
+
+    chip -> pc -= 2;
 }
 
 void __ld_dt_v(chip_t* chip, const uint16_t instr){
@@ -231,15 +236,19 @@ void __ld_f_v(chip_t* chip, const uint16_t instr){
 }   
 
 void __ld_b_v(chip_t* chip, const uint16_t instr){
-    ;;
+    uint8_t n = chip -> v[(instr & 0x0F00) >> 8];
+
+    chip -> memory[chip -> i] = n / 100;
+    chip -> memory[chip -> i + 1] = (n / 10) % 10;
+    chip -> memory[chip -> i + 2] = n % 10;
 }
 
 void __ld_i_v(chip_t* chip, const uint16_t instr){
-    for(uint8_t n = 0; n < ((instr & 0x0F00) >> 8); n++) chip -> memory[chip -> i + n] = chip -> v[n];
+    for(uint8_t n = 0; n <= ((instr & 0x0F00) >> 8); n++) chip -> memory[chip -> i + n] = chip -> v[n];
 }
 
-void __ld_v_i(chip_t* chip){
-    for(uint8_t n = 0; n < 16; n++) chip -> v[n] = chip -> memory[chip -> i + n];
+void __ld_v_i(chip_t* chip, const uint16_t instr){
+    for(uint8_t n = 0; n <= ((instr & 0x0F00) >> 8); n++) chip -> v[n] = chip -> memory[chip -> i + n];
 }
 
 /** ADD **/
@@ -248,7 +257,11 @@ void __add_v_byte(chip_t* chip, const uint16_t instr){
 }
 
 void __add_v_v(chip_t* chip, const uint16_t instr){
-    chip -> v[(instr & 0x0F00) >> 8] = chip -> v[(instr & 0x00F0) >> 4];
+    uint16_t res = (uint16_t) chip -> v[(instr & 0x0F00) >> 8] + chip -> v[(instr & 0x00F0) >> 4];
+
+    chip -> v[0xF] = res >> 8 ? 1 : 0;
+
+    chip -> v[(instr & 0x0F00) >> 8] = res;
 }
 
 void __add_i_v(chip_t* chip, const uint16_t instr){
@@ -312,9 +325,18 @@ void __drw(chip_t* chip, const uint16_t instr){
     uint8_t height = instr & 0x000F;
     uint8_t x = chip -> v[(instr & 0x0F00) >> 8];
     uint8_t y = chip -> v[(instr & 0x00F0) >> 4];
+    chip -> v[0xF] = 0;
 
     for(uint8_t k = 0; k < height; k++){
-        chip -> display[(y + k) * (DISPLAY_WIDTH / 8) + (x / 8)]        ^= chip -> memory[chip -> i + k] >> (x % 8);
-        chip -> display[(y + k) * (DISPLAY_WIDTH / 8) + (x / 8) + 1]    ^= chip -> memory[chip -> i + k] << (8 - (x % 8));
+        uint8_t idx_1 = ((y + k) % DISPLAY_HEIGHT) * (DISPLAY_WIDTH / 8) + ((x / 8) % (DISPLAY_WIDTH / 8));
+        uint8_t idx_2 = ((y + k) % DISPLAY_HEIGHT) * (DISPLAY_WIDTH / 8) + (((x / 8) + 1) % (DISPLAY_WIDTH / 8));
+
+        // Draw Sprite
+        chip -> display[idx_1] ^= chip -> memory[chip -> i + k] >> (x % 8);
+        chip -> display[idx_2] ^= chip -> memory[chip -> i + k] << (8 - (x % 8));
+
+        // Check Collision
+        if((chip -> display[idx_1] ^ chip -> memory[chip -> i + k] >> (x % 8)) != 0)      chip -> v[0xF] = 1;
+        else if((chip -> display[idx_2] ^ chip -> memory[chip -> i + k] >> (x % 8)) != 0) chip -> v[0xF] = 1;
     }
 }
