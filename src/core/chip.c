@@ -16,6 +16,8 @@ chip_t* create_chip(const char* program, const uint16_t length, void* (*malloc_f
     for(uint16_t i = 0; i < length; i++) chip -> memory[PROGRAM_LOCATION + i] = program[i];
 
     // Initialize Registers
+    for(uint8_t i = 0; i <= 0xF; i++) chip -> v[i] = 0;
+
     chip -> pc = PROGRAM_LOCATION; 
     chip -> sp = 0;
     chip -> dt = 0;

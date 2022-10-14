@@ -328,15 +328,11 @@ void __drw(chip_t* chip, const uint16_t instr){
     chip -> v[0xF] = 0;
 
     for(uint8_t k = 0; k < height; k++){
-        uint8_t idx_1 = ((y + k) % DISPLAY_HEIGHT) * (DISPLAY_WIDTH / 8) + ((x / 8) % (DISPLAY_WIDTH / 8));
-        uint8_t idx_2 = ((y + k) % DISPLAY_HEIGHT) * (DISPLAY_WIDTH / 8) + (((x / 8) + 1) % (DISPLAY_WIDTH / 8));
+        uint8_t disp_idx = ((y + k) % DISPLAY_HEIGHT) * (DISPLAY_WIDTH / 8) + ((x / 8) % (DISPLAY_WIDTH / 8));
 
-        // Draw Sprite
-        chip -> display[idx_1] ^= chip -> memory[chip -> i + k] >> (x % 8);
-        chip -> display[idx_2] ^= chip -> memory[chip -> i + k] << (8 - (x % 8));
+        for(uint8_t p = 0; p < 8; p++){
+            ;
+        }
 
-        // Check Collision
-        if((chip -> display[idx_1] ^ chip -> memory[chip -> i + k] >> (x % 8)) != 0)      chip -> v[0xF] = 1;
-        else if((chip -> display[idx_2] ^ chip -> memory[chip -> i + k] >> (x % 8)) != 0) chip -> v[0xF] = 1;
     }
 }
