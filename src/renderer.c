@@ -14,7 +14,8 @@ void render(chip_t* chip, SDL_Renderer* renderer){
         for(uint8_t x = 0; x < DISPLAY_WIDTH; x++){
             px.x = x * px.w;
 
-            if((chip -> display[y * (DISPLAY_WIDTH / 8) + (x / 8)] >> (7 - (x % 8))) & 0b1) SDL_RenderFillRect(renderer, &px);
+            // if((chip -> display[y * (DISPLAY_WIDTH / 8) + (x / 8)] >> (7 - (x % 8))) & 0b1) 
+            //     SDL_RenderFillRect(renderer, &px);
         }
     }
 

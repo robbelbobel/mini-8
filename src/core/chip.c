@@ -6,9 +6,6 @@ chip_t* create_chip(const char* program, const uint16_t length, void* (*malloc_f
     // Create CHIP
     chip_t* chip = (chip_t*) (*malloc_fun_ptr)(sizeof(chip_t));
 
-    // Create Display Buffer
-    chip -> display = (uint8_t*) (*malloc_fun_ptr)(sizeof(uint8_t) * DISPLAY_BUFFER_SIZE);
-
     // Initialize Key States
     chip -> keyStates = 0x0000;
 

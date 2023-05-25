@@ -11,13 +11,12 @@
 
 #define DISPLAY_WIDTH   64
 #define DISPLAY_HEIGHT  32
-#define DISPLAY_BUFFER_SIZE (DISPLAY_WIDTH / 8) * DISPLAY_HEIGHT // 1 Bit Per Pixel
 
 struct chip_s{
     uint8_t memory[4096];
     uint16_t stack[16];
 
-    uint8_t* display;
+    uint8_t display[DISPLAY_HEIGHT][DISPLAY_WIDTH / 8]; // Every Pixel Is Stored In 1 Bit
     uint16_t keyStates;
 
     uint16_t pc;
