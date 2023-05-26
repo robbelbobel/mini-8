@@ -7,6 +7,8 @@ void __execute(chip_t* chip){
     // Update Program Counter
     chip -> pc += 2;
 
+    // printf("instruction: %x\n", instr);
+
     // Execute Instruction
     switch((instr & 0xF000) >> 12){
         case 0x0:
@@ -157,7 +159,7 @@ void __execute(chip_t* chip){
 
 /** CLS RET **/
 void __cls(chip_t* chip){
-    for(uint16_t i = 0; i < DISPLAY_HEIGHT; i++) for(uint16_t j = 0; j < DISPLAY_WIDTH / 8; j++) chip -> display[i][j] = 0x00;
+    for(uint16_t i = 0; i < DISPLAY_HEIGHT; i++) for(uint16_t j = 0; j < DISPLAY_WIDTH; j++) chip -> display[i][j] = 0x00;
 }
 
 void __ret(chip_t* chip){
@@ -322,11 +324,12 @@ void __rnd(chip_t* chip, const uint16_t instr){
 }
 
 void __drw(chip_t* chip, const uint16_t instr){
-    printf("instruction: %x, n: %i\n", instr, instr & 0x000F);
-    
-    for(uint8_t i = 0; i < instr & 0x000F; i++){
+    for(uint8_t i = 0; i < (instr & 0x000F); i++){
+        uint8_t y = chip -> v[(instr & 0x00F0) >> 4] + i;
+
         for(uint8_t j = 0; j < 8; j++){
-            // chip -> display[((instr & 0x0F00) >> 8 + i) * DISPLAY_WIDTH + (((instr & 0xF000) >> 12) + j) / 8] ^= 0b1 < j;
+            // Draw Each Pixel
+            chip -> display[y][chip -> v[(instr & 0x0F00) >> 8] + j] = (chip -> memory[chip -> i + i] >> (7 - j)) & 0b1;
         }
     }
 }

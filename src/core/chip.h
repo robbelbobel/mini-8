@@ -16,7 +16,7 @@ struct chip_s{
     uint8_t memory[4096];
     uint16_t stack[16];
 
-    uint8_t display[DISPLAY_HEIGHT][DISPLAY_WIDTH / 8]; // Every Pixel Is Stored In 1 Bit
+    uint8_t display[DISPLAY_HEIGHT][DISPLAY_WIDTH];
     uint16_t keyStates;
 
     uint16_t pc;
