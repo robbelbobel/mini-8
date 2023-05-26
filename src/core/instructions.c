@@ -324,12 +324,20 @@ void __rnd(chip_t* chip, const uint16_t instr){
 }
 
 void __drw(chip_t* chip, const uint16_t instr){
+    // Initialize Collision Flag
+    chip -> v[0xF] = 0;
+
     for(uint8_t i = 0; i < (instr & 0x000F); i++){
         uint8_t y = chip -> v[(instr & 0x00F0) >> 4] + i;
 
+        // Draw Each Pixel
         for(uint8_t j = 0; j < 8; j++){
-            // Draw Each Pixel
-            chip -> display[y][chip -> v[(instr & 0x0F00) >> 8] + j] = (chip -> memory[chip -> i + i] >> (7 - j)) & 0b1;
+            uint8_t x  = chip -> v[(instr & 0x0F00) >> 8] + j;
+            uint8_t px = (chip -> memory[chip -> i + i] >> (7 - j)) & 0b1;
+
+            if(px && chip -> display[y][x]) chip -> v[0xF] = 1;
+            
+            chip -> display[y][x] ^= px;
         }
     }
 }
